@@ -1,0 +1,19 @@
+---
+- name: Set SELinux context
+  hosts: all
+  tasks:
+  - name: Install required packages
+    yum:
+      name: policycoreutils-python
+      state: present
+  - name: Set SELinux context
+    sefcontext:
+      target: /tmp/removeme
+      setype: tmp_t
+      state: present
+    notify:
+      - run restorecon
+  handlers:
+  - name: Restore SELinux context
+    command: restorecon -v /tmp/removeme
+...

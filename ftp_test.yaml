@@ -1,0 +1,15 @@
+---
+- name: Test ftp configuration
+  hosts: localhost
+  tasks:
+  - name: install lftp
+    yum:
+      name: lftp
+      state: latest
+  - name:
+    shell: >
+      lftp <<EOF
+      open 172.31.1.255
+      put /etc/hosts
+      EOF
+...

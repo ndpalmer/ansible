@@ -1,0 +1,27 @@
+---
+- name: Copy files
+  hosts: nodes
+  tasks:
+  - name: Copy hosts file to tmp
+    copy:
+      src: /etc/hosts
+      dest: /tmp/
+  - name: Write to /tmp/hosts
+    blockinfile:
+      path: /tmp/hosts
+      block: |
+        192.168.4.110 host1.example.com
+        192.168.4.120 host2.example.com
+      state: present
+  - name: verify the checksum
+    stat:
+      path: /tmp/hosts
+      checksum_algorithm: sha1
+    register: results
+  - debug:
+      msg: "The checksum of /tmp/hosts is {{ results.stat.checksum }}"
+  - name: Fetch hosts file
+    fetch:
+      src: /tmp/hosts
+      dest: /tmp/
+...

@@ -1,0 +1,62 @@
+---
+- name: vsftpd template
+  hosts: all
+  vars:
+    anonymous_enable: YES
+    local_enable: YES
+    write_enable: YES
+    anon_upload_enable: YES
+  tasks:
+  - name: Install required packages
+    yum:
+      name:
+        - vsftpd
+        - firewalld
+        - policycoreutils-python
+      state: latest
+  - name: Copy vsftpd.conf from template
+    template:
+      src: vsftpd.j2
+      dest: /etc/vsftpd/vsftpd.conf
+  - name: Create ftp pub directory and set permissions
+    file:
+      path: /var/ftp/pub
+      owner: ftp
+      mode: '0777'
+      state: directory
+  - name: Set SELinux context
+    sefcontext:
+      target: /var/ftp/pub
+      setype: public_content_rw_t
+      state: present
+    notify:
+      - run restorecon
+  - name: Set SELinux boolean
+    seboolean:
+      name: allow_ftpd_anon_write
+      state: yes
+      persistent: yes
+  - name: Change firewalld_t to permissive
+    selinux_permissive:
+      name: firewalld_t
+      permissive: true
+  - name: Start firewalld and vsftpd services
+    service:
+      name: '{{ item }}'
+      enabled: yes
+      state: started
+      daemon_reload: yes
+    with_items:
+      - vsftpd
+      - firewalld
+  - name: Permit ftp traffic in default zone
+    firewalld:
+      zone: public
+      service: ftp
+      permanent: yes
+      state: enabled
+      immediate: yes
+  handlers:
+  - name: run restorecon
+    command: restorecon -vR /var/pub/ftp
+...
