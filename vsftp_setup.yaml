@@ -2,10 +2,10 @@
 - name: vsftpd template
   hosts: all
   vars:
-    anonymous_enable: YES
-    local_enable: YES
-    write_enable: YES
-    anon_upload_enable: YES
+    anonymous_enable: yes
+    local_enable: yes
+    write_enable: yes
+    anon_upload_enable: yes
   tasks:
   - name: Install required packages
     yum:
@@ -24,6 +24,14 @@
       owner: ftp
       mode: '0777'
       state: directory
+  - name: Set SELinux to enforcing
+    selinux:
+      policy: targeted
+      state: enforcing
+    register: sel_enforce
+  - name: Reboot to complete SELinux policy change
+    reboot:
+    when: sel_enforce.reboot_required=='True'
   - name: Set SELinux context
     sefcontext:
       target: /var/ftp/pub
@@ -51,12 +59,11 @@
       - firewalld
   - name: Permit ftp traffic in default zone
     firewalld:
-      zone: public
       service: ftp
       permanent: yes
       state: enabled
       immediate: yes
   handlers:
   - name: run restorecon
-    command: restorecon -vR /var/pub/ftp
+    command: restorecon -vR /var/ftp/pub
 ...

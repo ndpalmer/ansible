@@ -1,0 +1,15 @@
+---
+- name: Create apache vhost
+  hosts: all
+  user: ansible
+  become: True
+
+  roles:
+    - role: apache-vhost
+
+  post_tasks:
+    - name: Install contents from local file
+      copy:
+        src: files/html/
+        dest: "/var/www/vhosts/{{ ansible_hostname }}"
+...

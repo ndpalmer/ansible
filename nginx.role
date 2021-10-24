@@ -1,0 +1,9 @@
+---
+- name: Use galaxy nginx role
+  hosts: ip-172-31-15-94.ap-southeast-2.compute.internal 
+  user: ansible
+  become: true
+
+  roles:
+    - role: geerlingguy.nginx
+...

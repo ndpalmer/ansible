@@ -1,0 +1,26 @@
+---
+# tasks file for apache-vhost
+- name: Install http
+  yum:
+    name: httpd
+    state: latest
+- name: Start and enable httpd
+  service:
+    name: httpd
+    state: started
+    enabled: True
+- name: Install vhost config file
+  template:
+    src: vhost.conf.j2
+    dest: /etc/httpd/conf.d/vhost.conf
+    owner: root
+    group: root
+    owner: 0644
+- name: Allow http traffic in default zone
+  firewalld:
+    service: http
+    state: enabled
+    permanent: yes
+  notify:
+    - Restart httpd
+...

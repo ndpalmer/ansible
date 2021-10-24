@@ -2,14 +2,14 @@
 - name: Test ftp configuration
   hosts: localhost
   tasks:
-  - name: install lftp
+  - name: Install lftp
     yum:
       name: lftp
       state: latest
-  - name:
+  - name: Upload file using lftp
     shell: >
-      lftp <<EOF
-      open 172.31.1.255
+      lftp 172.31.15.94 <<EOF
+      cd pub
       put /etc/hosts
       EOF
 ...
