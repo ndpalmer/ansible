@@ -1,0 +1,14 @@
+---
+users:
+  - username: linda
+    groups: sales
+    password: "{{ vault_linda_password }}"
+  - username: lori
+    groups: sales
+    password: "{{ vault_lori_password }}"
+  - username: lisa
+    groups: account
+    password: "{{ vault_lori_password }}"
+  - username: lucy
+    groups: account
+    password: "{{ vault_lucy_password }}"

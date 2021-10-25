@@ -29,9 +29,11 @@
       policy: targeted
       state: enforcing
     register: sel_enforce
+  - debug:
+      var: sel_enforce.reboot_required
   - name: Reboot to complete SELinux policy change
     reboot:
-    when: sel_enforce.reboot_required=='True'
+    when: "{{ sel_enforce.reboot_required }}==true"
   - name: Set SELinux context
     sefcontext:
       target: /var/ftp/pub

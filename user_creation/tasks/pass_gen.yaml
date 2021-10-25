@@ -1,0 +1,9 @@
+---
+  - name: Generate password
+    set_fact:
+      random_password: "{{ lookup('password', '/dev/null chars=ascii_lowercase,digits length=12 encrypt=sha512_crypt') }}"
+  - name: Copy password to vault file
+    lineinfile:
+      path: group_vars/nodes/vault
+      line: "{{ 'vault_' + item.username + '_password: ' + random_password }}"
+      create: yes

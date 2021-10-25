@@ -1,0 +1,34 @@
+---
+- name: Install ftp server and repo utils on controller
+  hosts: nodes
+  tasks:
+  - name: Create repo directory
+    file:
+      path: /var/ftp/repos/dev
+      state: directory  
+  - name: Install required packages
+    yum:
+      name:
+        - vsftpd
+        - createrepo
+        - yum-utils
+      state: latest
+  - name: Download packages to ftp dev repo
+    yum:
+      name:
+        - nmap
+      state: latest
+      download_dir: /var/ftp/repos/dev
+      download_only: yes
+  - name: Create repository
+    yum_repository:
+      name: dev
+      description: Development repository
+      baseurl: file:///var/ftp/repos/dev
+      gpgcheck: no
+  - name: Start vsftpd service
+    service:
+      name: vsftpd
+      enabled: yes
+      state: started
+...

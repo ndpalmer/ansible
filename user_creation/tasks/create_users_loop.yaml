@@ -1,0 +1,5 @@
+---
+  - name: Create user with encrypted pass
+    user:
+      name: "{{ item.username }}"
+      password: "{{ item.password }}"

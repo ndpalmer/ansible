@@ -1,0 +1,9 @@
+---
+- name: Add users
+  hosts: nodes
+  vars_files:
+    - group_vars/nodes/users
+  tasks:
+    - name: Gen loop
+      include_tasks: tasks/create_users_loop.yaml
+      loop: "{{ users }}"

@@ -1,0 +1,25 @@
+---
+- name: Configure repoistory
+  hosts: nodes
+  vars:
+    my_package: nmap
+  tasks:
+  - name: Connect to example repo
+    yum_repository:
+      name: lab-repo
+      description: "Lab repo"
+      file: lab-repo
+      baseurl: ftp://control.example.com/repo/
+      gpgcheck: no
+  - name: Install package
+    yum:
+      name: "{{ my_package }}"
+      state: present
+  - name: Updates package facts
+    package_facts:
+      manager: auto
+  - name: Show package facts for my_package
+    debug:
+      var: ansible_facts.packages[my_package]
+    when: my_package in ansible_facts.pakcages
+...
